@@ -1,4 +1,4 @@
-const CACHE_NAME = 'patente-ab-v2';
+const CACHE_NAME = 'patente-ab-v3';
 
 self.addEventListener('install', e => {
   e.waitUntil(
@@ -17,13 +17,14 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // API请求直接放行，不缓存
+  // API和字体请求直接放行，绝不缓存拦截
   if (e.request.url.includes('api.anthropic.com') ||
-      e.request.url.includes('fonts.google')) {
+      e.request.url.includes('googleapis.com') ||
+      e.request.url.includes('gstatic.com')) {
     e.respondWith(fetch(e.request));
     return;
   }
-  // 其他资源缓存优先
+  // app资源：缓存优先
   e.respondWith(
     caches.match(e.request).then(r => r || fetch(e.request))
   );
